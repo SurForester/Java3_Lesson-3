@@ -51,6 +51,7 @@ public class ChatController implements Initializable {
         } else {
             textArea.setText(textArea.getText() + "\n" + text);
         }
+        this.network.writeLog(text);
     }
 
     public void displayClient(String nickName) {
@@ -71,12 +72,20 @@ public class ChatController implements Initializable {
         });
     }
 
-
     public void sendAuth(ActionEvent event) {
         boolean authenticated = network.sendAuth(loginField.getText(), passwordField.getText());
-        if(authenticated) {
+        if (authenticated) {
             loginField.clear();
             passwordField.clear();
+            // обнуляем чат
+            textArea.setText("");
+            // загружаем чат
+            String[] chatList = this.network.getLogList();
+            for (int i = 0; i < chatList.length; i++) {
+                if (chatList[i] != null) {
+                    textArea.setText(textArea.getText() + "\n" + chatList[i]);
+                }
+            }
             setAuthenticated(true);
         }
     }
